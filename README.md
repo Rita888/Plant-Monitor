@@ -122,3 +122,13 @@ void setup() {
   Serial.println(GB.dateTime("H:i:s")); // UTC.dateTime("l, d-M-y H:i:s.v T")
 }
   
+I had huge issues with connecting to the MQTT and therefore couldn't proceed any further 
+
+because I don't come from any coding background I really need to start with basics to understand exactly what I need to do in order to connect the board and sensor to MQTT as well as understand the code.
+
+
+
+
+
+
+
