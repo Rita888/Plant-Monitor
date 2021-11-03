@@ -18,8 +18,8 @@ Once the board has been fused with the sensor using the provided sketch ![Screen
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "CE-Hub";
-const char* password = "()c454,w1f1";
+const char* ssid = "CE-***";
+const char* password = "()c***,w***";
 const char* host = "iot.io";
 
 void setup() {
