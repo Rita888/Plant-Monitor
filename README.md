@@ -1,133 +1,45 @@
-# Plant-Monitor
-CASA0014 Assessment
-//step by step set up of the plant monitor
-I am given an opportunity to look after Asparagus 'Fern' setaceus. Plant requires damp soil (not waterlogged - not dry)
-bright light but not direct sunlight 
-Plant monitor will monitor the soil moisture over a period of several months (at least 6 months) 
-The monitor needs to be coded to be able to collect data, show it MQTT and save the data (locally and remotely)
-![image](https://user-images.githubusercontent.com/93122551/139865886-8ac3103e-0aca-475e-af73-4bbb0b98dc2a.png)
+//Building a Plant Monitor//
 
-Intergrated Development Environmenta (IDE) was installed and Arduino is used for this project to write the code in order to run the sensor 
-ESP8266 Feather Huzzah board was used to connect the soil moisture sensor in order to collect the data
-The board has WiFi connection and a power source (USB and an option to install a rechargable battery)
-The ASAIR AM2302 SNG120254EC0C7 sensor was added to the board along with two metal nails that will be temporary placed inside the plant pot (the soil) 
-The basic principle of the two metal nails is to measure the resistance of the soil between two nais a distance apart. The more mositure there is in the soil the lower the resistance. 
-Once the board has been fused with the sensor using the provided sketch ![Screenshot 2021-11-02 at 14 39 45](https://user-images.githubusercontent.com/93122551/139869283-0f9c1491-35bc-402d-82b7-43482f3b36bd.png)
+This is my step by step blog of how I built a plant monitor to record humidity, temperature and soil moisture levels
 
-//connect to wifi first (connects to CE lab) change if location has changed
 
-#include <ESP8266WiFi.h>
+![Screenshot 2021-11-18 at 14 22 48](https://user-images.githubusercontent.com/93122551/142433200-2e206222-e709-4d8d-af70-6dbaa67e9d7d.png)
 
-const char* ssid = "CE-***";
-const char* password = "()c***,w***";
-const char* host = "iot.io";
 
-void setup() {
-  Serial.begin(115200);
-  delay(100);
+This is my plant and I have the oppotunity to look after it for the next few months. 
 
-  //starting to connect to wifi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-
-while (WiFi.status() != WL_CONNECTED) {
-  delay(500);
-  Serial.print(".");
-}
-
-Serial.println("");
-Serial.println("WiFi connected");
-Serial.println("IP address: ");
-Serial.println(WiFi.localIP());
-}
-
-void loop() {
-  // main code here, to run repeatedly:
-  delay(5000) ;
+It is a Common asparagus fern (Asparagus setaceus) Gardener's world.com (2021) noted that it likes bright (out of direct sunlight) areas, minimum of 13°C. The soil needs to be moist but not boggy - allowing any excess water to drain away. In the spring it likes more water and throughtout autumn and winter too much. It needs to tertilised with liquid feed in spring and summer. 
+ 
   
- Serial.println("-------------------------------------");
- Serial.print("Connecting to ");
- Serial.println(host);
+  The equipment that I need (not all componenets are listed at this time - the list will be added to)
+  _Feather Huzzah ESP8266 wifi
+  _Raspberry Pi 
+  _Moisture Sensor 
+  _Jumper Wires 
+  _Resistors 
+  _usb cable to power up 
+  _Metal nails 
+  _Breadboard
+  _Soldering Iron and Soldering 
 
-  // use WiFiClient class to create Tranmission Control Protocol (TCP) 
-  WiFiClient client;
-  const int httpPort = 80;
-  if (!client.connect(host, httpPort)) {
-    Serial.println("connection failed");
-    return;
-  }
-//Creating a Universal Resource Identifier (URI) for the request
-String url = "/data/index.html";
-Serial.print("Requesting URL: ");
-Serial.println(host + url);
+Step 1 -
+-I need Arduino IDE to write code and connect to the Feather Huzzah
+-Download and install MQTT Explorer - this is where I will be able to see my live data (note that this data is not stored - only displays live data) 
+-GitHub account to store my project and data 
 
-// This will send the request to the server
-client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-"Host: " + host + "\r\n" +
-"Connection: close\r\n\r\n");
+Step 2 -
+Setting Feather Huzzah ESP8266 by opening up Arduino and install CP2104 driver and board package 
+Add Additional Board manager URLs section that will recognise my board by download the right package to my laptop - otherwise my laptop doesn't know anything about the board
 
-delay(500);
-//read all the lines of the reply from server and print them to server
-while(client.available()){
-  String line = client.readStringUntil('\r');
-  Serial.print(line);
-}
+Step 3
+-Sensing soil will use Arduino Nails Soil Sensor which works on a principle that resistance between two nails are measured at a distance apart - therefore the further the nails apart the less resistance there is, closer together the greater the resistance. It is important that once the nails are set in the plant pot (soil) that the space between the nails remains the same for as long as possible. 
 
-Serial.println();
-Serial.println("closing connection");
-}
+Note to self: challenging to choose the nails as these will depend on the length, depth of soil, type of soil. I was given the nails and no further questions asked at this time of the assignment. This might be an issue as the nails might corrode overtime and the data might be invalid. Time will show but something to consider for any future projects.
 
 
-#include <ESP8266WiFi.h>
-#include <ezTime.h>
+![Screenshot 2021-11-18 at 14 41 19](https://user-images.githubusercontent.com/93122551/142436532-fc4bcd4c-b1af-4b48-ae25-169c1a482b8a.png)
 
-const char* ssid     = "CE-Hub";
-const char* password = "()c454,w1f1";
-
-Timezone GB;
-
-void setup() {
-  Serial.begin(115200);
-  delay(100);
-
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi connected");  
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  waitForSync();
-
-  Serial.println("UTC: " + UTC.dateTime());
-
-  GB.setLocation("Europe/London");
-  Serial.println("London time: " + GB.dateTime());  
-
-}
-
-  void loop() {
-  delay(1000);
-  Serial.println(GB.dateTime("H:i:s")); // UTC.dateTime("l, d-M-y H:i:s.v T")
-}
-  
-I had huge issues with connecting to the MQTT and therefore couldn't proceed any further 
-
-because I don't come from any coding background I really need to start with basics to understand exactly what I need to do in order to connect the board and sensor to MQTT as well as understand the code.
-
-
-
+I connected my Feather Huzzah and DHT22 Temperature / Humidity sensor to the CASA Plant monitor shield that was provided by Professor Duncan Smith at UCL (2021) for Connected Environments MSc Programme. I connected all of the required components such as the resisters (to stop it buirning up as the electirical current is 5V) by soldering these together. Unfortunately, because I am all over the place at this time and place I didn't take a good photograph of the final product. 
 
 
 
